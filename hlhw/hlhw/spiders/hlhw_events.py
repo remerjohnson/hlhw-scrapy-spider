@@ -17,7 +17,11 @@ class EventsSpider(scrapy.Spider):
 
     def parse(self, response):
         for r in response.xpath('//html'):
-            description = r.xpath('//p').extract()
-            for d in description:
-                yield {'description': d.strip().replace('<p>', '').replace('</p>', '')}
+            descriptions = r.xpath('//p').extract()
+            h3s = response.xpath('//h3').extract()
+            h3s = h3s[1:]
+            for description, title in zip(descriptions, h3s):
+                yield {'description': description.strip().replace('<p>', '').replace('</p>', ''),
+                      'title': title.strip().replace('<h3>', '').replace('</h3>', '')
+                      }
             
